@@ -72,7 +72,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white p-6 lg:p-8">
+    <div className="min-h-screen bg-[#0f172a] text-white p-4 sm:p-6 lg:p-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold">Profile</h1>
