@@ -48,6 +48,7 @@ export default function Home() {
             onClick={() => {
               localStorage.removeItem("token");
               localStorage.removeItem("user");
+              localStorage.removeItem("budget");
               toast.dismiss(toastId);
               navigate("/login", { replace: true });
             }}
