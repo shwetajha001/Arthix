@@ -26,8 +26,13 @@ export const updateBudget = async (req, res) => {
 
     const budget = await Budget.findOneAndUpdate(
       { user: userId },
-      { monthlyBudget },
-      { new: true, upsert: true, setDefaultsOnInsert: true }
+      { user: userId, monthlyBudget },
+      {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
+        runValidators: true,
+      }
     );
 
     res.json({ monthlyBudget: budget.monthlyBudget });

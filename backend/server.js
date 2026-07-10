@@ -40,7 +40,8 @@ app.use("/api", async (req, res, next) => {
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/expenses", expenseRoutes);app.use("/api/budget", budgetRoutes);
+app.use("/api/expenses", expenseRoutes);
+app.use("/api/budget", budgetRoutes);
 const PORT = process.env.PORT || 5000;
 
 if (process.env.VERCEL !== "1") {
