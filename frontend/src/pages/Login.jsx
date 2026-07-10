@@ -23,6 +23,7 @@ export default function Login() {
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("budget", String(res.data.user.monthlyBudget || 0));
 
       toast.success("Login successful! Welcome back");
       setData({ email: "", password: "" });
