@@ -18,18 +18,30 @@ export default function Budget() {
   };
 
   useEffect(() => {
+    const loadBudget = async () => {
+      try {
+        const res = await api.get("/api/budget");
+        setBudget(Number(res.data.monthlyBudget || 0));
+      } catch (error) {
+        console.error("Could not load budget", error);
+      }
+    };
+
     fetchExpenses();
-    const savedBudget = localStorage.getItem("budget");
-    if (savedBudget) setBudget(Number(savedBudget));
+    loadBudget();
   }, []);
 
-  const handleSetBudget = () => {
+  const handleSetBudget = async () => {
     const value = Number(input);
     if (!value) return;
 
-    setBudget(value);
-    localStorage.setItem("budget", value);
-    setInput("");
+    try {
+      const res = await api.put("/api/budget", { monthlyBudget: value });
+      setBudget(Number(res.data.monthlyBudget || 0));
+      setInput("");
+    } catch (error) {
+      console.error("Could not save budget", error);
+    }
   };
 
   const remaining = budget - totalSpent;

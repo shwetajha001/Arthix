@@ -15,7 +15,7 @@ import api, { getErrorMessage } from "../api";
 export default function Profile() {
   const [expenses, setExpenses] = useState([]);
   const [budgetInput, setBudgetInput] = useState("");
-  const [budget, setBudget] = useState(Number(localStorage.getItem("budget") || 0));
+  const [budget, setBudget] = useState(0);
   const navigate = useNavigate();
 
   const user = useMemo(() => {
@@ -27,16 +27,21 @@ export default function Profile() {
   }, []);
 
   useEffect(() => {
-    const fetchExpenses = async () => {
+    const fetchBudgetAndExpenses = async () => {
       try {
-        const res = await api.get("/api/expenses");
-        setExpenses(res.data);
+        const [budgetRes, expensesRes] = await Promise.all([
+          api.get("/api/budget"),
+          api.get("/api/expenses"),
+        ]);
+
+        setBudget(Number(budgetRes.data.monthlyBudget || 0));
+        setExpenses(expensesRes.data);
       } catch (error) {
         toast.error(getErrorMessage(error, "Could not load profile summary"));
       }
     };
 
-    fetchExpenses();
+    fetchBudgetAndExpenses();
   }, []);
 
   const totalSpent = expenses.reduce(
@@ -51,7 +56,7 @@ export default function Profile() {
     ? new Date(Number.parseInt(user.id.slice(0, 8), 16) * 1000).toLocaleDateString()
     : "Not available";
 
-  const handleBudgetSave = () => {
+  const handleBudgetSave = async () => {
     const value = Number(budgetInput);
 
     if (!value || value < 0) {
@@ -59,10 +64,14 @@ export default function Profile() {
       return;
     }
 
-    localStorage.setItem("budget", String(value));
-    setBudget(value);
-    setBudgetInput("");
-    toast.success("Budget updated");
+    try {
+      const res = await api.put("/api/budget", { monthlyBudget: value });
+      setBudget(Number(res.data.monthlyBudget || 0));
+      setBudgetInput("");
+      toast.success("Budget updated");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Could not save budget"));
+    }
   };
 
   const handleLogout = () => {
